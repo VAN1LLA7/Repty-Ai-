@@ -1,0 +1,736 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  ArrowRight, 
+  Check, 
+  Cpu, 
+  Zap, 
+  BarChart3, 
+  ShieldCheck, 
+  Users, 
+  Plus, 
+  Minus,
+  Menu,
+  X,
+  ChevronRight,
+  Star,
+  Globe,
+  Phone,
+  Calendar,
+  MessageSquare,
+  Clock,
+  LayoutGrid,
+  Sparkles,
+  Zap as Lizard
+} from 'lucide-react';
+
+// --- Components ---
+
+const CursorLight = () => {
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <>
+      <motion.div
+        className="fixed inset-0 pointer-events-none z-0"
+        animate={{
+          background: `radial-gradient(1000px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212, 242, 125, 0.12) 0%, rgba(212, 242, 125, 0.04) 40%, transparent 80%)`
+        }}
+        transition={{ type: 'tween', ease: "backOut", duration: 0.6 }}
+      />
+      <motion.div
+        className="fixed inset-0 pointer-events-none z-0"
+        animate={{
+          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212, 242, 125, 0.18) 0%, transparent 70%)`
+        }}
+        transition={{ type: 'tween', ease: "backOut", duration: 0.3 }}
+      />
+    </>
+  );
+};
+
+const SoundWave = ({ count = 12, className = "" }) => {
+  return (
+    <div className={`flex items-center gap-1 h-12 ${className}`}>
+      {[...Array(count)].map((_, i) => (
+        <div 
+          key={i} 
+          className="wave-bar" 
+          style={{ 
+            height: `${Math.random() * 100}%`,
+            animationDelay: `${i * 0.1}s`,
+            animationDuration: `${0.5 + Math.random()}s`
+          }} 
+        />
+      ))}
+    </div>
+  );
+};
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4' : 'py-6'}`}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className={`flex items-center justify-between px-6 py-3 rounded-full transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-lg shadow-sm border border-black/5' : 'bg-transparent'}`}>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-brand-lime rounded-lg flex items-center justify-center">
+              <Lizard size={20} className="text-brand-dark" />
+            </div>
+            <span className="font-bold text-xl tracking-tight">Repty.ai</span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-8">
+            {['Features', 'Pricing', 'How it works', 'FAQ'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-medium text-brand-dark/70 hover:text-brand-dark transition-colors">
+                {item}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button className="hidden md:block text-sm font-semibold px-6 py-2.5 rounded-full bg-brand-dark text-white hover:bg-brand-dark/90 transition-all">
+              Get Started
+            </button>
+            <button 
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 right-0 bg-white border-b border-black/5 p-6 md:hidden shadow-xl"
+          >
+            <div className="flex flex-col gap-4">
+              {['Features', 'Pricing', 'How it works', 'FAQ'].map((item) => (
+                <a 
+                  key={item} 
+                  href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
+                  className="text-lg font-medium py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+              <button className="w-full bg-brand-dark text-white py-4 rounded-2xl font-bold mt-4">
+                Get Started
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+};
+
+const Hero = () => {
+  return (
+    <section className="relative pt-32 pb-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-brand-lime animate-pulse" />
+            Repty.ai Automatisierungspartner
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-brand-dark mb-6 leading-[1.1]">
+            The AI Receptionist<br />
+            <span className="text-brand-dark/40">For Your Business</span>
+          </h1>
+          <p className="max-w-2xl mx-auto text-lg text-brand-dark/60 mb-10 leading-relaxed">
+            Ersetzen Sie Ihren Empfang durch Repty.ai. Automatisierte Anrufbearbeitung und Terminplanung rund um die Uhr für Restaurants, Kliniken, Zahnärzte und mehr.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="w-full sm:w-auto px-8 py-4 bg-brand-dark text-white rounded-full font-bold flex items-center justify-center gap-2 hover:scale-105 transition-transform">
+              Demo buchen <ArrowRight size={18} />
+            </button>
+            <button className="w-full sm:w-auto px-8 py-4 bg-white text-brand-dark border border-black/10 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-brand-gray transition-colors">
+              Anruf anhören
+            </button>
+          </div>
+        </motion.div>
+
+        {/* AI Calling Visual */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="mt-12 relative w-full max-w-4xl mx-auto min-h-[400px] flex items-center justify-center"
+        >
+          {/* Abstract background elements */}
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-brand-lime/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-brand-dark/5 rounded-full blur-3xl" />
+          
+          <div className="relative w-full aspect-video bg-white rounded-[3rem] border border-black/5 shadow-2xl overflow-hidden flex items-center justify-center p-12">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-lime/10 to-transparent" />
+            
+            <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-md">
+              <div className="flex items-center gap-4 bg-brand-dark text-white px-6 py-3 rounded-2xl shadow-xl">
+                <div className="relative w-4 h-4">
+                  <div className="pulse-ring w-full h-full" />
+                  <div className="pulse-dot absolute top-0 left-0" />
+                </div>
+                <span className="font-bold text-sm">Live-Anruf: Klinik von Dr. Smith</span>
+              </div>
+
+              <div className="w-full bg-brand-gray rounded-3xl p-6 flex flex-col gap-4 border border-black/5">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-brand-dark/10 flex items-center justify-center flex-shrink-0">
+                    <Users size={14} />
+                  </div>
+                  <div className="bg-white p-3 rounded-2xl rounded-tl-none text-xs font-medium shadow-sm border border-black/5">
+                    "Hallo, ich würde gerne einen Termin für eine Zahnreinigung am nächsten Dienstag buchen."
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 justify-end">
+                  <div className="bg-brand-lime p-3 rounded-2xl rounded-tr-none text-xs font-bold shadow-sm">
+                    "Natürlich! Ich habe 10:00 Uhr oder 14:30 Uhr verfügbar. Was passt Ihnen am besten?"
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-brand-lime flex items-center justify-center flex-shrink-0">
+                    <Lizard size={14} />
+                  </div>
+                </div>
+              </div>
+
+              <SoundWave count={24} className="w-full justify-center" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Trusted By */}
+        <div className="mt-20">
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-dark/40 mb-8">Vertraut von den weltweit führenden Teams</p>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-40 grayscale">
+            {['Amazon', 'Coinbase', 'Tesla', 'Nvidia', 'Evernote', 'Google', 'Microsoft'].map((brand) => (
+              <span key={brand} className="text-xl font-black tracking-tighter">{brand}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Features = () => {
+  const features = [
+    {
+      title: "Google Sheets Sync",
+      desc: "Protokollieren Sie jeden Anruf, jedes Kundendetail und jeden Termin automatisch und in Echtzeit in Ihren Google Sheets oder Ihrem CRM.",
+      icon: <LayoutGrid className="text-brand-dark" />,
+      bg: "bg-white"
+    },
+    {
+      title: "Email & SMS Alerts",
+      desc: "Senden Sie sofort E-Mail-Bestätigungen über Gmail und SMS-Erinnerungen an Kunden, um Terminausfälle zu reduzieren.",
+      icon: <MessageSquare className="text-brand-dark" />,
+      bg: "bg-white"
+    },
+    {
+      title: "Call Transcripts",
+      desc: "Erhalten Sie ein vollständiges Texttranskript und eine Zusammenfassung jedes Gesprächs zwischen der KI und Ihren Kunden.",
+      icon: <Clock className="text-brand-dark" />,
+      bg: "bg-white"
+    },
+    {
+      title: "Auto-Fulfillment",
+      desc: "Die KI extrahiert automatisch Datum, Uhrzeit und Servicedetails, um Ihren Kalender ohne manuelle Eingabe zu füllen.",
+      icon: <Zap className="text-brand-dark" />,
+      bg: "bg-white"
+    }
+  ];
+
+  return (
+    <section id="features" className="py-24 relative z-10">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header Section */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 text-[10px] font-bold uppercase tracking-wider mb-4">
+            Funktionen
+          </div>
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">Leistungsstarke Automatisierung, null Aufwand</h2>
+          <p className="text-brand-dark/60 mb-10 text-lg">Repty.ai lässt sich in die Tools integrieren, die Sie bereits verwenden, und verwandelt jeden Anruf in strukturierte Daten und geplantes Wachstum.</p>
+          
+          {/* Logos Row */}
+          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-6 opacity-40 mb-10 grayscale">
+            <div className="flex items-center gap-2">
+              <Globe size={20} />
+              <span className="font-bold text-sm tracking-tighter">Google Sheets</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MessageSquare size={20} />
+              <span className="font-bold text-sm tracking-tighter">Gmail</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={20} />
+              <span className="font-bold text-sm tracking-tighter">Outlook</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap size={20} />
+              <span className="font-bold text-sm tracking-tighter">Slack</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={20} />
+              <span className="font-bold text-sm tracking-tighter">Salesforce</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users size={20} />
+              <span className="font-bold text-sm tracking-tighter">HubSpot</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Cpu size={20} />
+              <span className="font-bold text-sm tracking-tighter">Zapier</span>
+            </div>
+          </div>
+
+          <button className="px-8 py-4 bg-brand-lime text-brand-dark rounded-full font-bold text-sm hover:bg-brand-lime/80 transition-all hover:scale-105">
+            Integrationen erkunden
+          </button>
+        </div>
+        
+        {/* 2x2 Grid of Squares */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          {features.map((f, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5 }}
+              className={`${f.bg} p-10 rounded-[2.5rem] border border-black/5 shadow-sm flex flex-col gap-5 hover:shadow-xl transition-all duration-300`}
+            >
+              <div className="w-14 h-14 rounded-2xl bg-brand-lime flex items-center justify-center mb-2">
+                {f.icon}
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-3">{f.title}</h3>
+                <p className="text-brand-dark/60 leading-relaxed">{f.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Process = () => {
+  const steps = [
+    { title: "Tools verbinden", desc: "Verknüpfen Sie Repty.ai mit Ihrem Geschäftstelefon, Google Sheets und Gmail. Unser Einrichtungsassistent übernimmt die API-Verbindungen für Sie." },
+    { title: "KI-Training", desc: "Laden Sie Ihre Dienstleistungen und Verfügbarkeiten hoch. Die KI von Repty.ai lernt, Termindaten und -zeiten aus natürlichen Gesprächen zu extrahieren." },
+    { title: "Auto-Fulfillment", desc: "Repty.ai nimmt Anrufe entgegen, bucht den Termin in Ihrem Kalender, protokolliert das Transkript in Sheets und sendet sofort eine E-Mail-Bestätigung." }
+  ];
+
+  return (
+    <section id="how-it-works" className="py-24 bg-brand-dark text-white rounded-[3rem] mx-6 my-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] font-bold uppercase tracking-wider mb-4">
+             Wie es funktioniert
+          </div>
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Ihr KI-Empfang in 3 Schritten</h2>
+          <p className="text-white/60 max-w-xl mx-auto">Richten Sie Repty.ai in wenigen Minuten ein und verändern Sie die Art und Weise, wie Ihr Unternehmen Kundenanrufe bearbeitet.</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-12">
+          {steps.map((step, i) => (
+            <div key={i} className="relative">
+              <div className="text-8xl font-black text-white/5 absolute -top-12 -left-4 pointer-events-none">0{i+1}</div>
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
+                <p className="text-white/50 leading-relaxed">{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-20 grid md:grid-cols-3 gap-6">
+           <div className="bg-white/5 border border-white/10 p-8 rounded-3xl h-64 flex items-center justify-center">
+              <div className="w-full space-y-4">
+                 <div className="h-2 w-3/4 bg-white/10 rounded-full" />
+                 <div className="h-2 w-1/2 bg-white/10 rounded-full" />
+                 <div className="h-2 w-5/6 bg-white/10 rounded-full" />
+              </div>
+           </div>
+           <div className="bg-brand-lime p-8 rounded-3xl h-64 flex items-center justify-center text-brand-dark">
+              <Zap size={64} className="animate-float" />
+           </div>
+           <div className="bg-white/5 border border-white/10 p-8 rounded-3xl h-64 flex items-end">
+              <div className="w-full flex items-end gap-2 h-32">
+                 <div className="w-full bg-white/20 rounded-t-lg h-1/2" />
+                 <div className="w-full bg-white/20 rounded-t-lg h-3/4" />
+                 <div className="w-full bg-brand-lime rounded-t-lg h-full" />
+                 <div className="w-full bg-white/20 rounded-t-lg h-2/3" />
+              </div>
+           </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Pricing = () => {
+  const [billingCycle, setBillingCycle] = useState('monthly');
+
+  const plans = [
+    {
+      name: "Standard Bot",
+      price: billingCycle === 'monthly' ? 49 : 39,
+      desc: "Basic automation for small shop",
+      features: ["Deutsche Rufnummer mit Wunsch-Vorwahl", "Bis zu 100 Anrufe / Monat", "Google Sheets Integration", "E-Mail-Bestätigungen", "Standard KI-Stimme", "1 Kalender-Synchronisierung"],
+      popular: false
+    },
+    {
+      name: "Pro Bot",
+      price: billingCycle === 'monthly' ? 149 : 119,
+      desc: "Advanced logic for busy clinics",
+      features: ["Deutsche Rufnummer mit Wunsch-Vorwahl", "Bis zu 500 Anrufe / Monat", "Vollständige Anruftranskripte", "SMS-Erinnerungen", "Premium natürliche Stimmen", "CRM & Gmail Integrationen", "Priorisierter Support"],
+      popular: true
+    },
+    {
+      name: "Elite Bot",
+      price: billingCycle === 'monthly' ? 399 : 319,
+      desc: "Full custom training for enterprises",
+      features: ["Deutsche Rufnummer mit Wunsch-Vorwahl", "Unbegrenzte Anrufe", "Individuelles Branchentraining", "Automatische Fulfillment-Logik", "White-Label-Optionen", "Erweiterte Analysen", "24/7 direkter Support"],
+      popular: false
+    }
+  ];
+
+  return (
+    <section id="pricing" className="py-24">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 text-[10px] font-bold uppercase tracking-wider mb-4">
+             Bot-Optionen
+          </div>
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Wählen Sie Ihren KI-Partner</h2>
+          <p className="text-brand-dark/60 max-w-xl mx-auto mb-4">Wählen Sie die Bot-Funktion, die Ihrem Geschäftsvolumen und Ihrer Komplexität entspricht.</p>
+          <p className="text-[10px] font-bold text-brand-dark/30 uppercase tracking-widest mb-10">* Alle Funktionen erfordern die Zustimmung zur Datennutzung während der Anrufe</p>
+          
+          <div className="flex items-center justify-center gap-4">
+            <span className={`text-sm font-bold ${billingCycle === 'monthly' ? 'text-brand-dark' : 'text-brand-dark/40'}`}>Monatlich</span>
+            <button 
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className="w-14 h-8 bg-brand-gray border border-black/10 rounded-full relative p-1 transition-colors"
+            >
+              <div className={`w-6 h-6 bg-brand-dark rounded-full transition-transform duration-300 ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
+            </button>
+            <span className={`text-sm font-bold ${billingCycle === 'yearly' ? 'text-brand-dark' : 'text-brand-dark/40'}`}>Jährlich <span className="text-brand-lime bg-brand-dark px-2 py-0.5 rounded-full text-[10px]">20% SPAREN</span></span>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 items-stretch">
+          {plans.map((plan, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ 
+                y: -10,
+                scale: plan.popular ? 1.05 : 1.02,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
+              className={`group relative p-10 rounded-[2.5rem] flex flex-col transition-all duration-500 ${
+                plan.popular 
+                  ? 'bg-brand-lime border-2 border-brand-lime shadow-[0_20px_50px_rgba(212,242,125,0.3)] z-10' 
+                  : 'bg-white border border-black/5 shadow-sm hover:shadow-xl'
+              }`}
+            >
+              {plan.popular && (
+                <>
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-dark text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg z-20">
+                    Am beliebtesten
+                  </div>
+                  {/* Animated background glow for popular card */}
+                  <div className="absolute inset-0 bg-brand-lime rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10" />
+                </>
+              )}
+              
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                <p className={`text-sm ${plan.popular ? 'text-brand-dark/60' : 'text-brand-dark/40'}`}>{plan.desc}</p>
+              </div>
+              
+              <div className="flex items-baseline gap-1 mb-8">
+                <motion.span 
+                  key={plan.price}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="text-5xl font-black"
+                >
+                  €{plan.price}
+                </motion.span>
+                <span className={`text-sm font-bold ${plan.popular ? 'text-brand-dark/60' : 'text-brand-dark/40'}`}>Pro Monat</span>
+              </div>
+
+              <div className="space-y-4 mb-10 flex-grow">
+                {plan.features.map((feature, idx) => (
+                  <motion.div 
+                    key={idx} 
+                    initial={{ x: -10, opacity: 0 }}
+                    whileInView={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 + (idx * 0.05) }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className={`mt-1 rounded-full p-0.5 flex-shrink-0 ${plan.popular ? 'bg-brand-dark text-brand-lime' : 'bg-brand-lime text-brand-dark'}`}>
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                    <span className="text-sm font-medium">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              <button className={`w-full py-4 rounded-2xl font-bold transition-all relative overflow-hidden group/btn ${
+                plan.popular 
+                  ? 'bg-brand-dark text-white hover:shadow-[0_0_20px_rgba(0,0,0,0.2)]' 
+                  : 'bg-brand-gray text-brand-dark hover:bg-brand-lime'
+              }`}>
+                <span className="relative z-10">Get Started Now</span>
+                <motion.div 
+                  className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"
+                />
+              </button>
+
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Testimonials = () => {
+  const testimonials = [
+    {
+      name: "Bessie Cooper",
+      role: "Operations Lead at Focus",
+      content: "Unser Team spart dank Repty.ai jede Woche mindestens 10 Stunden. Das ist Zeit, die wir jetzt in Innovation und Wachstum investieren.",
+      avatar: "https://picsum.photos/seed/bessie/100/100"
+    },
+    {
+      name: "Lila Chen",
+      role: "Product Manager at Omnipro",
+      content: "Repty.ai hat uns geholfen, sich wiederholende Aufgaben zu automatisieren und betriebliche Erkenntnisse zu gewinnen, die wir vorher nie hatten. Es ist, als hätten wir einen KI-Partner in unserem Team!",
+      avatar: "https://picsum.photos/seed/lila/100/100"
+    },
+    {
+      name: "Marco S.",
+      role: "Founder of IntelliCare",
+      content: "Mit Repty.ai haben wir unsere manuelle Arbeit um 40 % reduziert und Echtzeit-Erkenntnisse gewonnen, die uns helfen, intelligentere Entscheidungen zu treffen. Die Zuverlässigkeit ist unübertroffen.",
+      avatar: "https://picsum.photos/seed/marco/100/100"
+    }
+  ];
+
+  return (
+    <section className="py-24 relative z-10">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 text-[10px] font-bold uppercase tracking-wider mb-4">
+               Kundenstimmen
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">Vertraut von Startups und Unternehmen weltweit</h2>
+          </div>
+          <p className="text-brand-dark/60 max-w-xs">Über 200 Unternehmen aus verschiedenen Branchen verlassen sich auf Repty.ai, um Arbeitsabläufe zu rationalisieren, die Produktivität zu steigern und nachhaltiges Wachstum zu ermöglichen.</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((t, i) => (
+            <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm">
+              <div className="flex gap-1 mb-6">
+                {[...Array(5)].map((_, idx) => <Star key={idx} size={16} className="fill-brand-lime text-brand-lime" />)}
+              </div>
+              <p className="text-brand-dark/70 mb-8 italic leading-relaxed">"{t.content}"</p>
+              <div className="flex items-center gap-4">
+                <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover" referrerPolicy="no-referrer" />
+                <div>
+                  <h4 className="font-bold text-sm">{t.name}</h4>
+                  <p className="text-xs text-brand-dark/40">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const FAQ = () => {
+  const [openIndex, setOpenIndex] = useState(0);
+
+  const faqs = [
+    { q: "Sind meine Daten bei Repty.ai sicher?", a: "Absolut. Repty.ai nutzt Verschlüsselung auf Unternehmensniveau, eine sichere Cloud-Infrastruktur und regelmäßige Audits, um sicherzustellen, dass Ihre Geschäftsdaten immer sicher sind. Zuverlässigkeit und Vertrauen stehen im Mittelpunkt unseres Systems." },
+    { q: "Benötige ich Programmierkenntnisse, um Repty.ai zu nutzen?", a: "Ganz und gar nicht! Repty.ai ist mit einer benutzerfreundlichen Drag-and-Drop-Oberfläche ausgestattet. Sie können komplexe KI-Workflows erstellen, ohne eine einzige Zeile Code schreiben zu müssen." },
+    { q: "Wie lange dauert die Einrichtung von Repty.ai?", a: "Die meisten Teams sind in weniger als 30 Minuten startklar. Unsere vorgefertigten Integrationen und der intuitive Einrichtungsassistent machen den Übergang nahtlos." },
+    { q: "Kann Repty.ai mit meinem Unternehmen wachsen?", a: "Ja, Repty.ai ist darauf ausgelegt, mit Ihnen zu wachsen. Egal, ob Sie ein kleines Startup oder ein globales Unternehmen sind, unsere Infrastruktur skaliert automatisch, um Ihr steigendes Arbeitspensum zu bewältigen." }
+  ];
+
+  return (
+    <section id="faq" className="py-24">
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-black/5 text-[10px] font-bold uppercase tracking-wider mb-4">
+             FAQ
+          </div>
+          <h2 className="text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <div key={i} className="border-b border-black/5">
+              <button 
+                onClick={() => setOpenIndex(openIndex === i ? -1 : i)}
+                className="w-full py-6 flex items-center justify-between text-left hover:text-brand-dark/60 transition-colors"
+              >
+                <span className="font-bold text-lg">{faq.q}</span>
+                {openIndex === i ? <Minus size={20} /> : <Plus size={20} />}
+              </button>
+              <AnimatePresence>
+                {openIndex === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="pb-6 text-brand-dark/60 leading-relaxed">{faq.a}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const CTA = () => {
+  return (
+    <section className="py-24 px-6">
+      <div className="max-w-7xl mx-auto bg-brand-lime rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        
+        <div className="relative z-10">
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-brand-dark">Automate Today.<br />Dominate Tomorrow.</h2>
+          <p className="text-brand-dark/60 max-w-xl mx-auto mb-10 text-lg">Schließen Sie sich über 200 Startups und Unternehmen an, die bereits mit Repty.ai intelligenter skalieren. Erstellen Sie Workflows in Minuten, reduzieren Sie den manuellen Aufwand und schöpfen Sie Ihr Wachstumspotenzial aus.</p>
+          <button className="px-10 py-5 bg-brand-dark text-white rounded-full font-bold text-lg hover:scale-105 transition-transform">
+            Get Started Now
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = () => {
+  return (
+    <footer className="bg-brand-dark text-white pt-24 pb-12 rounded-t-[3rem]">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-12 mb-20">
+          <div className="col-span-2">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 bg-brand-lime rounded-lg flex items-center justify-center">
+                <Lizard size={20} className="text-brand-dark" />
+              </div>
+              <span className="font-bold text-2xl tracking-tight">Repty.ai</span>
+            </div>
+            <p className="text-white/40 max-w-xs mb-8">Empowering businesses with intelligent AI automation that scales effortlessly.</p>
+            <div className="flex gap-4">
+              {['Twitter', 'LinkedIn', 'Instagram', 'GitHub'].map(social => (
+                <a key={social} href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-lime hover:text-brand-dark transition-all">
+                  <Globe size={18} />
+                </a>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-6">Product</h4>
+            <ul className="space-y-4 text-white/40 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Company</h4>
+            <ul className="space-y-4 text-white/40 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/20 font-bold uppercase tracking-widest">
+          <p>© 2026 Repty.ai. All rights reserved.</p>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-white transition-colors">Cookie Settings</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// --- Main App ---
+
+export default function App() {
+  return (
+    <div className="min-h-screen selection:bg-brand-lime selection:text-brand-dark relative overflow-hidden bg-brand-gray">
+      <CursorLight />
+      <div className="relative z-10">
+        <Navbar />
+        <main>
+          <Hero />
+          <Features />
+          <Process />
+          <Pricing />
+          <Testimonials />
+          <FAQ />
+          <CTA />
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
+}

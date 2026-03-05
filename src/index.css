@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-lime: #D4F27D;
+  --color-brand-dark: #0A0A0A;
+  --color-brand-gray: #F5F5F5;
+  
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-gray text-brand-dark antialiased selection:bg-brand-lime selection:text-brand-dark;
+  }
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-black/5 rounded-3xl;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.pricing-card-popular {
+  @apply relative border-2 border-brand-lime shadow-xl scale-105 z-10;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.33); }
+  80%, 100% { opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1); }
+  100% { transform: scale(0.8); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1.5); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.pulse-ring {
+  @apply absolute rounded-full border-2 border-brand-lime;
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+.pulse-dot {
+  @apply w-4 h-4 bg-brand-lime rounded-full;
+  animation: pulse-dot 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+.wave-bar {
+  @apply w-1 bg-brand-lime rounded-full;
+  animation: wave 1s ease-in-out infinite;
+}
