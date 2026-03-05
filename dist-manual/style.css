@@ -1,0 +1,62 @@
+body {
+    background-color: #F5F5F5;
+    color: #0A0A0A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 1.5rem;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(0.33); }
+    80%, 100% { opacity: 0; }
+}
+
+@keyframes pulse-dot {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1); }
+    100% { transform: scale(0.8); }
+}
+
+@keyframes wave {
+    0%, 100% { transform: scaleY(0.5); }
+    50% { transform: scaleY(1.5); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.pulse-ring {
+    position: absolute;
+    border-radius: 9999px;
+    border-width: 2px;
+    border-color: #D4F27D;
+    animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+.pulse-dot {
+    width: 1rem;
+    height: 1rem;
+    background-color: #D4F27D;
+    border-radius: 9999px;
+    animation: pulse-dot 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+.wave-bar {
+    width: 0.25rem;
+    background-color: #D4F27D;
+    border-radius: 9999px;
+    animation: wave 1s ease-in-out infinite;
+}
